@@ -2,16 +2,19 @@
 
 namespace Camisa\Http\Controllers;
 
-use Camisa\Repositories\CategoryRepositoryEloquent;
-use Illuminate\Http\Request;
-
 use Camisa\Http\Requests;
-use Prettus\Validator\Contracts\ValidatorInterface;
-use Prettus\Validator\Exceptions\ValidatorException;
 use Camisa\Http\Requests\CategoryCreateRequest;
 use Camisa\Http\Requests\CategoryUpdateRequest;
 use Camisa\Repositories\CategoryRepository;
+use Camisa\Repositories\CategoryRepositoryEloquent;
+use Camisa\Transformers\CategoryTransformer;
 use Camisa\Validators\CategoryValidator;
+use League\Fractal\Manager;
+use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\Item;
+use Prettus\Validator\Contracts\ValidatorInterface;
+use Prettus\Validator\Exceptions\ValidatorException;
+use Spatie\Fractal\ArraySerializer;
 
 class CategoryController extends Controller
 {
@@ -24,13 +27,18 @@ class CategoryController extends Controller
      * @var CategoryValidator
      */
     protected $validator;
+    
+    /**
+     * @var Manager
+     */
+    protected $fractal;
 
-    public function __construct(CategoryRepositoryEloquent $repository, CategoryValidator $validator)
+    public function __construct(CategoryRepositoryEloquent $repository, CategoryValidator $validator, Manager $fractal)
     {
         $this->repository = $repository;
         $this->validator  = $validator;
+        $this->fractal = $fractal;
     }
-
 
     /**
      * Display a listing of the resource.
@@ -39,17 +47,22 @@ class CategoryController extends Controller
      */
     public function index()
     {
+        $this->fractal->setSerializer(new ArraySerializer());
+
         $this->repository->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+        
         $categories = $this->repository->all();
 
         if (request()->wantsJson()) {
-
             return response()->json([
                 'data' => $categories,
             ]);
         }
 
-        return compact('categories');
+        $collection = new Collection($categories, new CategoryTransformer);
+
+        return $this->fractal->createData($collection)->toArray();
+//        return compact('categories');
     }
 
     /**
@@ -91,7 +104,6 @@ class CategoryController extends Controller
         }
     }
 
-
     /**
      * Display the specified resource.
      *
@@ -101,6 +113,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
+        $this->fractal->setSerializer(new ArraySerializer());
+
         $category = $this->repository->find($id);
 
         if (request()->wantsJson()) {
@@ -110,9 +124,12 @@ class CategoryController extends Controller
             ]);
         }
 
-        return compact('category');
-    }
+        $collection = new Item($category, new CategoryTransformer);
 
+        return $this->fractal->createData($collection)->toArray();
+
+//        return compact('category');
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -123,10 +140,9 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-
         $category = $this->repository->find($id);
-
-        return view('categories.edit', compact('category'));
+//        return compact('category');
+        return $category;
     }
 
 
@@ -142,36 +158,30 @@ class CategoryController extends Controller
     {
 
         try {
-
             $this->validator->with($request->all())->passesOrFail(ValidatorInterface::RULE_UPDATE);
-
             $category = $this->repository->update($id, $request->all());
-
             $response = [
-                'message' => 'Category updated.',
+                'message' => 'Categoria atualizada.',
                 'data'    => $category->toArray(),
             ];
-
             if ($request->wantsJson()) {
-
                 return response()->json($response);
             }
 
             return redirect()->back()->with('message', $response['message']);
+
         } catch (ValidatorException $e) {
-
             if ($request->wantsJson()) {
-
                 return response()->json([
                     'error'   => true,
                     'message' => $e->getMessageBag()
                 ]);
             }
 
-            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
+            return $category;
+//            return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
-
 
     /**
      * Remove the specified resource from storage.

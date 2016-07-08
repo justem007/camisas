@@ -21,7 +21,7 @@ class CategoryTransformer extends TransformerAbstract
     public function transform(Category $model)
     {
         return [
-            'category_id'         => (int) $model->category_id,
+            'id'         => (int) $model->id,
             'name'                => $model->name,
             'habiltado'           => (boolean) $model->habilitado,
             'description'         => $model->description,

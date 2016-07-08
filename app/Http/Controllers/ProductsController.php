@@ -3,7 +3,6 @@
 namespace Camisa\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use Camisa\Http\Requests;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
@@ -152,7 +151,6 @@ class ProductsController extends Controller
             return redirect()->back()->withErrors($e->getMessageBag())->withInput();
         }
     }
-
 
     /**
      * Remove the specified resource from storage.

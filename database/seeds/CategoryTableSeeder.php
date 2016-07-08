@@ -16,9 +16,11 @@ class CategoryTableSeeder extends Seeder
         $limit = 30;
         for ($i = 0; $i < $limit; $i++){
             DB::table('categories')->insert([
-                'name'        => $faker->name,
+                'name'        => $faker->word,
                 'habilitado'  => $faker->boolean,
-                'description' => $faker->word
+                'description' => $faker->name,
+                'created_at'  => $faker->dateTimeThisMonth,
+                'updated_at'  => $faker->dateTimeThisMonth
             ]);
         }
     }
