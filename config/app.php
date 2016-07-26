@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'pt_BR',
 
     /*
     |--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => 'pt-br',
 
     /*
     |--------------------------------------------------------------------------
@@ -163,7 +163,12 @@ return [
         LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
         LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
         Spatie\Fractal\FractalServiceProvider::class,
-        Barryvdh\Cors\ServiceProvider::class
+        Barryvdh\Cors\ServiceProvider::class,
+        Zizaco\Entrust\EntrustServiceProvider::class,
+        Camisa\Providers\MarkdownServiceProvider::class,
+        Camisa\Providers\CarbonLanguageProvider::class,
+        Camisa\Providers\LeroyMongolidServiceProvider::class,
+//        Zizaco\MongolidLaravel\MongolidServiceProvider::class,
 
     ],
 
@@ -213,6 +218,8 @@ return [
         'Authorizer' => LucaDegasperi\OAuth2Server\Facades\Authorizer::class,
         'Fractal' => Spatie\Fractal\FractalFacade::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+        'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
+//        'MongoLid'    => Zizaco\Mongolid\Model::class,
 
     ],
 
