@@ -14,6 +14,7 @@ use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
 use Prettus\Validator\Contracts\ValidatorInterface;
 use Prettus\Validator\Exceptions\ValidatorException;
+use Redis;
 use Spatie\Fractal\ArraySerializer;
 
 class CategoryController extends Controller
@@ -203,5 +204,18 @@ class CategoryController extends Controller
         }
 
         return redirect()->back()->with('message', 'Category deleted.');
+    }
+
+    public function find($id)
+    {
+        $category = Redis::get('categories:name:'. $id);
+        
+        return $category;
+    }
+
+    public function main()
+    {
+        $route = 'layouts.main';
+        return view($route);
     }
 }

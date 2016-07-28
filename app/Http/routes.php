@@ -1,25 +1,21 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register index of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to cindex when that URI is requested.
-|
-*/
-
 use Illuminate\Support\Facades\Session;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'PaginasController@main');
+Route::get('categorias', 'PaginasController@categorias');
+Route::get('exemplo', 'PaginasController@exemplo');
 
 Route::get('token', function () {
     return Session::token();
 });
+
+Route::get('info', function (){
+      echo phpinfo();
+});
+
+
+Route::get('categories/profile', 'CategoryController@find');
 
 Route::group(['prefix' => 'api/rest'], function () {
 //    rotas das categorias
@@ -30,6 +26,7 @@ Route::group(['prefix' => 'api/rest'], function () {
     Route::get('categories/{id}/edit', ['as' => 'categories.edit', 'uses' => 'CategoryController@edit']);
     Route::put('categories/{id}', ['as' => 'categories.update', 'uses' => 'CategoryController@update']);
     Route::delete('categories/{id}', ['as' => 'categories.destroy', 'uses' => 'CategoryController@destroy']);
+
 //    rotas do produtos
     Route::get('products', ['as' => 'products.index', 'uses' => 'ProductsController@index']);
     Route::get('product/create', ['as' => 'products.create', 'uses' => 'ProductsController@create']);
